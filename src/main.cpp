@@ -55,8 +55,10 @@ void loop(){
     };
     
   }
-
+  
   else if (STRAIGHT.curState == CurrentState::allowed && !relay.digitalRead(STRAIGHT.relayNum)) relay.digitalWrite(STRAIGHT.relayNum, 1);
+
+
 
   // if (LEFT.curState == CurrentState::forbidden && STRAIGHT.curState == CurrentState::forbidden && RIGTH.curState == CurrentState::forbidden) 
   // {
