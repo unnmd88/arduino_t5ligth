@@ -24,6 +24,16 @@ Direction LEFT {2, INPUT_PULLUP, 1};
 Direction STRAIGHT {3, INPUT_PULLUP, 2};
 Direction RIGHT {4, INPUT_PULLUP, 3};
 
+void flashingRelay(Direction lamp)
+{
+  if ((millis() - lamp.timeStampFlashing) <= 500) relay.digitalWrite(lamp.relayNum, 0);
+  else if ((millis() - lamp.timeStampFlashing) >= 500 && (millis() - lamp.timeStampFlashing) <= 1000) relay.digitalWrite(lamp.relayNum, 1);
+  else if ((millis() - lamp.timeStampFlashing) >= 1000 && (millis() - lamp.timeStampFlashing) <= 1500) relay.digitalWrite(lamp.relayNum, 0);
+  else if ((millis() - lamp.timeStampFlashing) >= 1500 && (millis() - lamp.timeStampFlashing) <= 2000) relay.digitalWrite(lamp.relayNum, 1);
+  else if ((millis() - lamp.timeStampFlashing) >= 2000 && (millis() - lamp.timeStampFlashing) <= 2500) relay.digitalWrite(lamp.relayNum, 0);
+  else if ((millis() - lamp.timeStampFlashing) >= 2500 && (millis() - lamp.timeStampFlashing) <= 3000) relay.digitalWrite(lamp.relayNum, 1);
+}
+
 
 void setup(){
   delay(500);       
@@ -36,7 +46,9 @@ void setup(){
 }
 
 void loop(){
+  LEFT.readPinAndSetData();
   STRAIGHT.readPinAndSetData();
+  RIGHT.readPinAndSetData();
 
   // if ( (STRAIGHT.curState == States::forbidden) && (LEFT.curState == States::forbidden) && (RIGHT.curState == States::forbidden) )    
   Serial.print("STRAIGHT.pinState=");
@@ -53,35 +65,35 @@ void loop(){
   // Serial.println();
 
   if ( (STRAIGHT.curState == States::forbidden) && (LEFT.curState == States::forbidden) && (RIGHT.curState == States::forbidden) )    
-
-  {
-    relay.digitalWrite(LEFT.relayNum, HIGH);
-    relay.digitalWrite(STRAIGHT.relayNum, HIGH);
-    relay.digitalWrite(RIGHT.relayNum, HIGH);
-    relay.digitalWrite(4, LOW);
-    return;
-  }
+    {
+      relay.digitalWrite(LEFT.relayNum, HIGH);
+      relay.digitalWrite(STRAIGHT.relayNum, HIGH);
+      relay.digitalWrite(RIGHT.relayNum, HIGH);
+      relay.digitalWrite(4, LOW);
+      return;
+    }
   relay.digitalWrite(4, HIGH);
     
   if (LEFT.curState == States::forbidden) relay.digitalWrite(LEFT.relayNum, LOW);
   if (STRAIGHT.curState == States::forbidden) relay.digitalWrite(STRAIGHT.relayNum, LOW);
   if (RIGHT.curState == States::forbidden) relay.digitalWrite(RIGHT.relayNum, LOW);
 
-  if (STRAIGHT.curState == States::flashing)
-  Serial.print(millis() - STRAIGHT.timeStampFlashing);
-  Serial.println();
+  if (STRAIGHT.curState == States::flashing) flashingRelay(STRAIGHT);
+  if (LEFT.curState == States::flashing) flashingRelay(LEFT);
+  if (RIGHT.curState == States::flashing) flashingRelay(RIGHT);
 
-  {
-    if ((millis() - STRAIGHT.timeStampFlashing) <= 500) relay.digitalWrite(STRAIGHT.relayNum, 0);
-    else if ((millis() - STRAIGHT.timeStampFlashing) >= 500 && (millis() - STRAIGHT.timeStampFlashing) <= 1000) relay.digitalWrite(STRAIGHT.relayNum, 1);
-    else if ((millis() - STRAIGHT.timeStampFlashing) >= 1000 && (millis() - STRAIGHT.timeStampFlashing) <= 1500) relay.digitalWrite(STRAIGHT.relayNum, 0);
-    else if ((millis() - STRAIGHT.timeStampFlashing) >= 1500 && (millis() - STRAIGHT.timeStampFlashing) <= 2000) relay.digitalWrite(STRAIGHT.relayNum, 1);
-    // else if ((millis() - STRAIGHT.timeStampFlashing) >= 500 && ((millis() - STRAIGHT.timeStampFlashing) <= 1000)) relay.digitalWrite(STRAIGHT.relayNum, 1);
-    // else if ((millis() - STRAIGHT.timeStampFlashing) == 1000) relay.digitalWrite(STRAIGHT.relayNum, 0);
-    // else if ((millis() - STRAIGHT.timeStampFlashing) == 1500) relay.digitalWrite(STRAIGHT.relayNum, 1);
-    // else if ((millis() - STRAIGHT.timeStampFlashing) == 2000) relay.digitalWrite(STRAIGHT.relayNum, 0);
-    // else if ((millis() - STRAIGHT.timeStampFlashing) == 2500) relay.digitalWrite(STRAIGHT.relayNum, 1);
-  }
+  // Serial.print(millis() - STRAIGHT.timeStampFlashing);
+  // Serial.println();
+
+  // if ((millis() - STRAIGHT.timeStampFlashing) <= 500) relay.digitalWrite(STRAIGHT.relayNum, 0);
+  // else if ((millis() - STRAIGHT.timeStampFlashing) >= 500 && (millis() - STRAIGHT.timeStampFlashing) <= 1000) relay.digitalWrite(STRAIGHT.relayNum, 1);
+  // else if ((millis() - STRAIGHT.timeStampFlashing) >= 1000 && (millis() - STRAIGHT.timeStampFlashing) <= 1500) relay.digitalWrite(STRAIGHT.relayNum, 0);
+  // else if ((millis() - STRAIGHT.timeStampFlashing) >= 1500 && (millis() - STRAIGHT.timeStampFlashing) <= 2000) relay.digitalWrite(STRAIGHT.relayNum, 1);
+  // else if ((millis() - STRAIGHT.timeStampFlashing) >= 500 && ((millis() - STRAIGHT.timeStampFlashing) <= 1000)) relay.digitalWrite(STRAIGHT.relayNum, 1);
+  // else if ((millis() - STRAIGHT.timeStampFlashing) == 1000) relay.digitalWrite(STRAIGHT.relayNum, 0);
+  // else if ((millis() - STRAIGHT.timeStampFlashing) == 1500) relay.digitalWrite(STRAIGHT.relayNum, 1);
+  // else if ((millis() - STRAIGHT.timeStampFlashing) == 2000) relay.digitalWrite(STRAIGHT.relayNum, 0);
+  // else if ((millis() - STRAIGHT.timeStampFlashing) == 2500) relay.digitalWrite(STRAIGHT.relayNum, 1);
 
 
 
